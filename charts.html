@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports — ShopDash</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DF6B33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3h7v7H3z'/%3E%3Cpath d='M14 3h7v7h-7z'/%3E%3Cpath d='M14 14h7v7h-7z'/%3E%3Cpath d='M3 14h7v7H3z'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <style>
+    body { background-color: #090A14; font-family: 'Inter', sans-serif; color: #F9FAFB; }
+    .card { background: #111827; border: 1px solid #1F2937; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .stat-icon { width: 3rem; height: 3rem; border-radius: 0.75rem; background: #090A14; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden; }
+    .stat-icon::before { content: ''; position: absolute; inset: 0; opacity: 0.12; border-radius: inherit; }
+    .text-emerald-400 { box-shadow: inset 0 0 0 1px rgba(16,185,129,0.4); }
+    .text-emerald-400::before { background: linear-gradient(135deg, #10B981, #059669); }
+    .text-blue-400 { box-shadow: inset 0 0 0 1px rgba(59,130,246,0.4); }
+    .text-blue-400::before { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+    .text-purple-400 { box-shadow: inset 0 0 0 1px rgba(139,92,246,0.4); }
+    .text-purple-400::before { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+    .text-amber-400 { box-shadow: inset 0 0 0 1px rgba(245,158,11,0.4); }
+    .text-amber-400::before { background: linear-gradient(135deg, #F59E0B, #D97706); }
+    .text-red-400 { box-shadow: inset 0 0 0 1px rgba(239,68,68,0.4); }
+    .text-red-400::before { background: linear-gradient(135deg, #EF4444, #DC2626); }
+    .section-title { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-family: 'Poppins', sans-serif; font-size: 1.125rem; font-weight: 700; color: white; }
+    .tab-active { background: #111827; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    .tab-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; color: #9CA3AF; border: none; cursor: pointer; background: transparent; display: flex; align-items: center; gap: 0.375rem; }
+    .tab-btn:hover { color: #E5E7EB; }
+    .cta-btn { display: flex; align-items: center; gap: 0.5rem; background: #DF6B33; color: white; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.75rem; border: none; cursor: pointer; font-size: 0.875rem; transition: background 0.2s; box-shadow: 0 4px 12px rgba(223,107,51,0.2); }
+    .cta-btn:hover { background: #C45A28; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead th { text-align: left; padding: 0.75rem 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9CA3AF; border-bottom: 1px solid #1F2937; font-weight: 500; }
+    tbody tr { border-bottom: 1px solid rgba(31,41,55,0.5); transition: background 0.15s; }
+    tbody tr:hover { background: rgba(9,10,20,0.5); }
+    tbody td, tfoot td { padding: 0.75rem 0.5rem; }
+    tfoot tr { border-top: 1px solid #1F2937; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #D1D5DB; }
+    .roi-badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .roi-high { background: rgba(16,185,129,0.15); color: #10B981; }
+    .roi-normal { background: rgba(223,107,51,0.12); color: #DF6B33; }
+    .select-dark { background: #111827; border: 1px solid #1F2937; color: #D1D5DB; font-size: 0.875rem; border-radius: 0.75rem; padding: 0.5rem 0.75rem; outline: none; }
+    .select-dark:focus { border-color: #DF6B33; }
+    .trend-up { color: #10B981; }
+    .trend-down { color: #EF4444; }
+    .trend-badge { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.375rem; border-radius: 0.375rem; }
+    @media (max-width: 640px) {
+      .hide-mobile { display: none; }
+    }
+    /* Sidebar */
+    .nav-item { transition: all 0.2s; }
+    .nav-item:hover { background: rgba(223,107,51,0.1); color: #DF6B33; }
+    .nav-item.active { background: rgba(223,107,51,0.15); color: #DF6B33; border-color: rgba(223,107,51,0.3); }
+    .sidebar-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  </style>
+</head>
+<body>
+
+<!-- Top Horizontal Sidebar -->
+<nav class="sticky top-0 z-50" style="background:#111827;border-bottom:1px solid #1F2937" class="sidebar-shadow">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:64px">
+      <!-- Logo -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:12px;background:#090A14;border:1px solid #1F2937;display:flex;align-items:center;justify-content:center">
+          <i data-lucide="layout-grid" style="width:20px;height:20px;color:#DF6B33"></i>
+        </div>
+        <span style="font-family:Poppins,sans-serif;font-weight:700;font-size:18px;color:white" class="hidden sm:block">ShopDash</span>
+      </div>
+
+      <!-- Nav Items -->
+      <div style="display:flex;align-items:center;gap:4px;overflow-x:auto;padding:4px 0" class="hide-scrollbar">
+        <a href="home.html" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="home" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Home</span>
+        </a>
+        <a href="products.html" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="package" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Products</span>
+        </a>
+        <a href="charts.html" class="nav-item active" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;white-space:nowrap;text-decoration:none">
+          <i data-lucide="bar-chart-2" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Reports</span>
+        </a>
+        <a href="#about" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="info" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">About</span>
+        </a>
+        <a href="#contact" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="mail" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Contact</span>
+        </a>
+      </div>
+
+      <!-- User Menu -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="logout()" style="display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:8px 12px;color:#EF4444;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s">
+          <i data-lucide="log-out" style="width:16px;height:16px;color:#EF4444"></i>
+          <span style="display:none" class="sm:inline">Logout</span>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;background:#090A14;border:1px solid #1F2937;border-radius:12px;padding:6px 12px">
+          <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#DF6B33,#C45A28);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;font-family:Poppins,sans-serif">N</div>
+          <span style="font-size:14px;color:#D1D5DB" class="hidden sm:block">User</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="root"></div>
+
+<script>
+// ─── Session Guard ─────────────────────────────────────────────────────────
+if (!localStorage.getItem('isLoggedIn')) {
+  window.location.href = 'login.html';
+}
+
+var currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+// ─── Mock Data ──────────────────────────────────────────────────────────────
+var revenueData = [
+  { month: 'Jan', revenue: 28400, orders: 142, visitors: 8200 },
+  { month: 'Feb', revenue: 31200, orders: 158, visitors: 9100 },
+  { month: 'Mar', revenue: 35800, orders: 179, visitors: 10400 },
+  { month: 'Apr', revenue: 42100, orders: 210, visitors: 12300 },
+  { month: 'May', revenue: 38900, orders: 195, visitors: 11200 },
+  { month: 'Jun', revenue: 45600, orders: 228, visitors: 13800 },
+  { month: 'Jul', revenue: 51200, orders: 256, visitors: 15600 },
+  { month: 'Aug', revenue: 48700, orders: 244, visitors: 14900 },
+  { month: 'Sep', revenue: 54300, orders: 272, visitors: 17100 },
+  { month: 'Oct', revenue: 61800, orders: 309, visitors: 19800 },
+  { month: 'Nov', revenue: 74200, orders: 371, visitors: 24100 },
+  { month: 'Dec', revenue: 89400, orders: 447, visitors: 29500 },
+];
+
+var categoryData = [
+  { name: 'Electronics', value: 38, color: '#DF6B33' },
+  { name: 'Fashion', value: 25, color: '#3B82F6' },
+  { name: 'Home & Living', value: 18, color: '#10B981' },
+  { name: 'Beauty', value: 12, color: '#8B5CF6' },
+  { name: 'Sports', value: 7, color: '#F59E0B' },
+];
+
+var marketingData = [
+  { channel: 'Google Ads', spend: 5200, revenue: 28400, roi: 446, icon: 'search' },
+  { channel: 'Facebook Ads', spend: 3800, revenue: 19800, roi: 421, icon: 'thumbs-up' },
+  { channel: 'Email', spend: 800, revenue: 12600, roi: 1475, icon: 'mail' },
+  { channel: 'SEO / Blog', spend: 1200, revenue: 8200, roi: 583, icon: 'globe' },
+  { channel: 'Influencer', spend: 2400, revenue: 9100, roi: 279, icon: 'star' },
+  { channel: 'Affiliates', spend: 1600, revenue: 6800, roi: 325, icon: 'link' },
+];
+
+var topProducts = [
+  { rank: 1, name: 'Wireless Noise-Canceling Headphones', category: 'Electronics', revenue: 18420, units: 614, growth: '+24%', trend: 'up', icon: 'headphones' },
+  { rank: 2, name: 'Smart LED Desk Lamp Pro', category: 'Home & Living', revenue: 14280, units: 476, growth: '+18%', trend: 'up', icon: 'lamp-desk' },
+  { rank: 3, name: 'Minimalist Canvas Backpack', category: 'Fashion', revenue: 11960, units: 598, growth: '+31%', trend: 'up', icon: 'backpack' },
+  { rank: 4, name: 'Vitamin C Brightening Serum', category: 'Beauty', revenue: 9720, units: 810, growth: '+12%', trend: 'up', icon: 'droplets' },
+  { rank: 5, name: 'Running Shoes Air Mesh', category: 'Sports', revenue: 8560, units: 428, growth: '+9%', trend: 'up', icon: 'footprints' },
+  { rank: 6, name: 'Portable Bluetooth Speaker', category: 'Electronics', revenue: 7840, units: 392, growth: '+15%', trend: 'up', icon: 'speaker' },
+  { rank: 7, name: 'Stainless Steel Water Bottle', category: 'Sports', revenue: 6320, units: 790, growth: '+22%', trend: 'up', icon: 'thermometer' },
+  { rank: 8, name: 'Ergonomic Office Chair', category: 'Home & Living', revenue: 5980, units: 149, growth: '+7%', trend: 'up', icon: 'armchair' },
+];
+
+var dailySales = [
+  { day: 'Mon', sales: 2100 }, { day: 'Tue', sales: 1850 },
+  { day: 'Wed', sales: 2400 }, { day: 'Thu', sales: 2280 },
+  { day: 'Fri', sales: 3150 }, { day: 'Sat', sales: 3920 },
+  { day: 'Sun', sales: 3480 },
+];
+
+var monthlyTarget = [
+  { month: 'Jul', target: 50000, actual: 51200 },
+  { month: 'Aug', target: 47000, actual: 48700 },
+  { month: 'Sep', target: 52000, actual: 54300 },
+  { month: 'Oct', target: 58000, actual: 61800 },
+  { month: 'Nov', target: 70000, actual: 74200 },
+  { month: 'Dec', target: 85000, actual: 89400 },
+];
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+var fmt = function(n) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n); };
+var fmtK = function(n) { return '$' + (n / 1000).toFixed(1) + 'K'; };
+
+var totalRevenue = revenueData.reduce(function(s, d) { return s + d.revenue; }, 0);
+var totalOrders = revenueData.reduce(function(s, d) { return s + d.orders; }, 0);
+var avgOrderValue = Math.round(totalRevenue / totalOrders);
+var revGrowth = (((revenueData[11].revenue - revenueData[10].revenue) / revenueData[10].revenue) * 100).toFixed(1);
+var totalVisitors = revenueData.reduce(function(s, d) { return s + d.visitors; }, 0);
+var totalSpend = marketingData.reduce(function(s, d) { return s + d.spend; }, 0);
+var totalMktRevenue = marketingData.reduce(function(s, d) { return s + d.revenue; }, 0);
+var avgROI = Math.round(marketingData.reduce(function(s, d) { return s + d.roi; }, 0) / marketingData.length);
+
+// ─── Lucide Icon Helper ────────────────────────────────────────────────────
+// Inline SVG icons to avoid CDN loading issues with data-lucide
+var ICONS = {
+  // Nav & Brand
+  'layout-dashboard': '<path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>',
+  'scan-face': '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="4"/><path d="M8 12h.01"/><path d="M16 12h.01"/>',
+  'trending-up': '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  'trending-down': '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>',
+  'bell': '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  'filter': '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  'calendar': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  'chevron-down': '<polyline points="6 9 12 15 18 9"/>',
+  'chevron-right': '<polyline points="9 18 15 12 9 6"/>',
+  'arrow-up': '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+  'arrow-down': '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  'minus': '<line x1="5" y1="12" x2="19" y2="12"/>',
+  // Stats
+  'dollar-sign': '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  'shopping-cart': '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  'credit-card': '<rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  'users': '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  'wallet': '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/>',
+  'banknote': '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+  'percent': '<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  'mouse-pointer-click': '<path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/>',
+  'bar-chart': '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  // Charts & viz
+  'target': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  'pie-chart': '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+  'bar-chart-2': '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  'line-chart': '<path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>',
+  'activity': '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  'git-compare': '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/>',
+  // Tables & data
+  'table': '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>',
+  'trophy': '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  'download': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  'upload': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  'refresh-cw': '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  'eye': '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  'eye-off': '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>',
+  'settings': '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  // Status & indicators
+  'check-circle': '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  'alert-circle': '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  'info': '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  'help-circle': '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  'zap': '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  'layers': '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  'package': '<line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  'star': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  'heart': '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  'tag': '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  // Metrics & KPIs
+  'gauge': '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  'speed': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  'repeat': '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  'clock': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  'calendar-check': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/>',
+  'flag': '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  'bookmark': '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
+  'bookmark-plus': '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/>',
+  'award': '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+  'crown': '<path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/>',
+  'truck': '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+  'store': '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  'shopping-bag': '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  'credit-card-2': '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 16h4"/>',
+  'invoice': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+  'receipt': '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2-3-2z"/><path d="M8 10h8"/><path d="M8 14h4"/>',
+  'printer': '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  'file-text': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  'clipboard': '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>',
+  'list': '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
+  'grid': '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+  'menu': '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  'more-horizontal': '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+  'more-vertical': '<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>',
+  'plus': '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  'minus-circle': '<circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  'plus-circle': '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  'x': '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  'x-circle': '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+  'check': '<polyline points="20 6 9 17 4 12"/>',
+  'check-square': '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  'alert-triangle': '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  'shield': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  'lock': '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  'unlock': '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+  'key': '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>',
+  'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  'log-in': '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>',
+  'user': '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  'user-plus': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+  'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/>',
+  'user-x': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/>',
+  'users-2': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/>',
+  'map-pin': '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  'navigation': '<polygon points="3 11 22 2 13 21 11 13 3 11"/>',
+  'compass': '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+  'external-link': '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+  'maximize-2': '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>',
+  'minimize-2': '<polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/>',
+  'move': '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>',
+  'bar-chart-3': '<line x1="3" y1="22" x2="3" y2="15"/><line x1="8" y1="22" x2="8" y2="7"/><line x1="13" y1="22" x2="13" y2="4"/><line x1="18" y1="22" x2="18" y2="11"/>',
+  'pie-chart-2': '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+  'area-chart': '<path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-6"/>',
+  'scatter-chart': '<circle cx="7" cy="15" r="2"/><circle cx="12" cy="9" r="2"/><circle cx="17" cy="13" r="2"/><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/>',
+  'wifi': '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  'battery': '<rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/>',
+  'cpu': '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+  'server': '<rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>',
+  'database': '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  'hard-drive': '<line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/>',
+  'cloud': '<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>',
+  'cloud-drizzle': '<line x1="8" y1="19" x2="8" y2="21"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="16" y1="19" x2="16" y2="21"/><line x1="16" y1="13" x2="16" y2="15"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="12" y1="15" x2="12" y2="17"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>',
+  'sun': '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  'moon': '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  'thermometer-snowflake': '<path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>',
+  'umbrella': '<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>',
+  'wind': '<path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>',
+  'edit': '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+  'edit-2': '<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+  'save': '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  'share': '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+  'share-2': '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+  'copy': '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  'scissors': '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>',
+  'scissors-2': '<path d="M6 6l4 12"/><path d="M18 6l-4 12"/><path d="M4 18l16-0"/>',
+  'send': '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  'phone': '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  'phone-call': '<path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3m6 6.05l-4.5-4.5m0 0l3 3L16 9m-3 3l-3 3"/>',
+  'message-circle': '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  'message-square': '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  'bell-off': '<path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/>',
+  'volume-2': '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>',
+  'volume-x': '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>',
+  'video': '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  'video-off': '<path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10"/><line x1="1" y1="1" x2="23" y2="23"/>',
+  'image': '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  'image-plus': '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="6" y1="6" x2="12" y2="6"/>',
+  'trash': '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  'trash-2': '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  'archive': '<polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/>',
+  'folder': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  'folder-plus': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>',
+  'book-open': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  'book': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  'calendar-days': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
+  'sliders': '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+  'hash': '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
+  'at-sign': '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/>',
+  'bold': '<path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>',
+  'italic': '<line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/>',
+  'type': '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>',
+  'globe-2': '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  'map': '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>',
+  'map-pin-2': '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  'navigation-2': '<polygon points="3 11 22 2 13 21 11 13 3 11"/>',
+  'phone-incoming': '<polyline points="16 2 16 8 22 8"/><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/>',
+  'phone-outgoing': '<polyline points="22 8 22 2 16 2"/><path d="M11 13L2 2l7 11 9-4"/>',
+  'smartphone': '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  'tablet': '<rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  'monitor': '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  'laptop': '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0l1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/>',
+  'tv': '<rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>',
+  'watch': '<circle cx="12" cy="12" r="6"/><polyline points="12 9 12 12"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  'slack': '<path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/>',
+  'zoom-in': '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>',
+  'zoom-out': '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>',
+  'crosshair': '<circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/>',
+  'mail': '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  'search': '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  'thumbs-up': '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>',
+  'globe': '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  'link': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  // Products
+  'headphones': '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
+  'lamp-desk': '<path d="M9 2h6l2 7H7l2-7z"/><path d="M8 9v8a4 4 0 0 0 8 0V9"/><path d="M5 22h14"/>',
+  'backpack': '<path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v6H4z"/><path d="M6 12v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  'droplets': '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  'footprints': '<path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0z"/><path d="M16 17h4l1.5-3.5 1.5 3.5H22"/><path d="M2 17h4l1.5-3.5 1.5 3.5H8"/>',
+  'speaker': '<rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><circle cx="12" cy="14" r="4"/><line x1="12" y1="6" x2="12.01" y2="6"/>',
+  'thermometer': '<path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>',
+  'armchair': '<path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M5 18v2"/><path d="M19 18v2"/>',
+  // Misc
+  'sparkles': '<path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z"/><path d="M19 13l1 2 1-2 2-1-2-1-1-2-1 2-2 1 2 1z"/>',
+};
+
+function Icon(_ref) {
+  var name = _ref.name, size = _ref.size || 20, color = _ref.color || 'currentColor', className = _ref.className || '', fill = _ref.fill || 'none';
+  var svgContent = ICONS[name] || ICONS['info'];
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size, height: size,
+    viewBox: '0 0 24 24',
+    fill: fill, stroke: color,
+    strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round',
+    className: className,
+    dangerouslySetInnerHTML: { __html: svgContent }
+  });
+}
+
+// ─── SVG Chart Components ──────────────────────────────────────────────────
+
+// Bar Chart
+function BarChart(_ref2) {
+  var data = _ref2.data, xKey = _ref2.xKey, bars = _ref2.bars, height = _ref2.height, formatY = _ref2.formatY;
+
+  var svgW = 800, svgH = height || 240;
+  var margin = { top: 10, right: 10, bottom: 30, left: 55 };
+  var cW = svgW - margin.left - margin.right;
+  var cH = svgH - margin.top - margin.bottom;
+
+  var allValues = [];
+  bars.forEach(function(b) { data.forEach(function(d) { allValues.push(d[b.key] || 0); }); });
+  var maxVal = Math.max.apply(Math, allValues) * 1.1;
+
+  var xStep = cW / (data.length || 1);
+  var barGroupW = xStep * 0.7;
+  var barW = barGroupW / bars.length;
+
+  var yTicks = [0, 0.25, 0.5, 0.75, 1].map(function(t) { return Math.round(maxVal * t); });
+
+  var barElems = bars.map(function(b) {
+    return data.map(function(d, i) {
+      var barH = ((d[b.key] || 0) / maxVal) * cH;
+      var x = margin.left + i * xStep + (bars.indexOf(b) * barW) + (barGroupW - bars.length * barW) / 2;
+      var y = margin.top + cH - barH;
+      return React.createElement('rect', {
+        key: i, x: x, y: y, width: Math.max(barW - 2, 2), height: barH,
+        fill: b.color || '#DF6B33', rx: 3, opacity: 0.9,
+        style: { transition: 'opacity 0.15s' }
+      });
+    });
+  });
+
+  var xLabels = data.map(function(d, i) {
+    return React.createElement('text', {
+      key: i, x: margin.left + i * xStep + xStep / 2, y: svgH - 5,
+      fill: '#9CA3AF', fontSize: 12, textAnchor: 'middle', fontFamily: 'Inter, sans-serif'
+    }, d[xKey]);
+  });
+
+  var yLabels = yTicks.map(function(v, i) {
+    var y = margin.top + cH - (i / 4) * cH;
+    return React.createElement(React.Fragment, { key: i },
+      React.createElement('text', { x: margin.left - 8, y: y + 4, fill: '#9CA3AF', fontSize: 11, textAnchor: 'end', fontFamily: 'Inter, sans-serif' },
+        formatY ? formatY(v) : v
+      ),
+      React.createElement('line', { x1: margin.left, y1: y, x2: svgW - margin.right, y2: y, stroke: '#1F2937', strokeDasharray: '3,3' })
+    );
+  });
+
+  var legends = bars.map(function(b, i) {
+    return React.createElement('div', { key: i, style: { display: 'flex', alignItems: 'center', gap: '0.375rem' } },
+      React.createElement('div', { style: { width: 10, height: 10, borderRadius: 2, background: b.color || '#DF6B33' } }),
+      React.createElement('span', { style: { fontSize: '0.75rem', color: '#9CA3AF' } }, b.name)
+    );
+  });
+
+  return React.createElement('div', { style: { position: 'relative' } },
+    React.createElement('div', { style: { display: 'flex', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap', alignItems: 'center' } },
+      legends
+    ),
+    React.createElement('svg', { width: '100%', height: svgH, viewBox: '0 0 ' + svgW + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' },
+      yLabels, barElems, xLabels
+    )
+  );
+}
+
+// Line / Area Chart
+function LineChart(_ref3) {
+  var data = _ref3.data, xKey = _ref3.xKey, lines = _ref3.lines, height = _ref3.height, fillBelow = _ref3.fillBelow, areaGradId = _ref3.areaGradId;
+
+  var svgW = 800, svgH = height || 240;
+  var margin = { top: 10, right: 10, bottom: 30, left: 55 };
+  var cW = svgW - margin.left - margin.right;
+  var cH = svgH - margin.top - margin.bottom;
+
+  var allValues = [];
+  lines.forEach(function(l) { data.forEach(function(d) { allValues.push(d[l.key] || 0); }); });
+  var maxVal = Math.max.apply(Math, allValues) * 1.1;
+
+  var xStep = cW / (data.length - 1 || 1);
+
+  function getX(i) { return margin.left + i * xStep; }
+  function getY(v) { return margin.top + cH - (v / maxVal) * cH; }
+
+  var yTicks = [0, 0.25, 0.5, 0.75, 1].map(function(t) { return Math.round(maxVal * t); });
+
+  var linePaths = lines.map(function(line, li) {
+    var points = data.map(function(d, i) { return getX(i) + ',' + getY(d[line.key] || 0); }).join('L');
+    var strokeColor = line.color || '#DF6B33';
+
+    var path;
+    if (fillBelow && li === 0) {
+      var firstY = getY(data[0][line.key] || 0);
+      path = 'M' + getX(0) + ',' + firstY + 'L' + points + 'L' + getX(data.length - 1) + ',' + (margin.top + cH) + 'L' + getX(0) + ',' + (margin.top + cH) + 'Z';
+    } else {
+      path = 'M' + points;
+    }
+
+    return React.createElement(React.Fragment, { key: li },
+      fillBelow && li === 0 && React.createElement('defs', null,
+        React.createElement('linearGradient', { id: areaGradId || 'areaGrad', x1: '0', y1: '0', x2: '0', y2: '1' },
+          React.createElement('stop', { offset: '5%', stopColor: strokeColor, stopOpacity: 0.3 }),
+          React.createElement('stop', { offset: '95%', stopColor: strokeColor, stopOpacity: 0 })
+        )
+      ),
+      React.createElement('path', {
+        d: path, fill: fillBelow && li === 0 ? 'url(#' + (areaGradId || 'areaGrad') + ')' : 'none',
+        stroke: strokeColor, strokeWidth: 2,
+        strokeDasharray: line.dashed ? '5,5' : '',
+        strokeLinejoin: 'round'
+      }),
+      data.map(function(d, i) {
+        return React.createElement('circle', {
+          key: i, cx: getX(i), cy: getY(d[line.key] || 0), r: 3,
+          fill: strokeColor, stroke: '#111827', strokeWidth: 1.5
+        });
+      })
+    );
+  });
+
+  var xLabels = data.map(function(d, i) {
+    return React.createElement('text', {
+      key: i, x: getX(i), y: svgH - 5,
+      fill: '#9CA3AF', fontSize: 12, textAnchor: 'middle', fontFamily: 'Inter, sans-serif'
+    }, d[xKey]);
+  });
+
+  var yLabels = yTicks.map(function(v, i) {
+    var y = margin.top + cH - (i / 4) * cH;
+    return React.createElement(React.Fragment, { key: i },
+      React.createElement('text', { x: margin.left - 8, y: y + 4, fill: '#9CA3AF', fontSize: 11, textAnchor: 'end', fontFamily: 'Inter, sans-serif' }, v),
+      React.createElement('line', { x1: margin.left, y1: y, x2: svgW - margin.right, y2: y, stroke: '#1F2937', strokeDasharray: '3,3' })
+    );
+  });
+
+  var legends = lines.map(function(l, i) {
+    return React.createElement('div', { key: i, style: { display: 'flex', alignItems: 'center', gap: '0.375rem' } },
+      React.createElement('div', {
+        style: {
+          width: 20, height: 2,
+          background: l.dashed ? 'transparent' : l.color || '#DF6B33',
+          borderTop: l.dashed ? '2px dashed ' + (l.color || '#DF6B33') : '2px solid ' + (l.color || '#DF6B33')
+        }
+      }),
+      React.createElement('span', { style: { fontSize: '0.75rem', color: '#9CA3AF' } }, l.name)
+    );
+  });
+
+  return React.createElement('div', { style: { position: 'relative' } },
+    React.createElement('div', { style: { display: 'flex', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap', alignItems: 'center' } }, legends),
+    React.createElement('svg', { width: '100%', height: svgH, viewBox: '0 0 ' + svgW + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' },
+      yLabels, linePaths, xLabels
+    )
+  );
+}
+
+// Horizontal Bar Chart (for marketing ROI)
+function HBarChart(_ref4) {
+  var data = _ref4.data, labelKey = _ref4.labelKey, valueKey = _ref4.valueKey, valueColor = _ref4.valueColor, formatVal = _ref4.formatVal;
+
+  var svgW = 800, svgH = data.length * 44 + 20;
+  var margin = { top: 5, right: 70, bottom: 5, left: 100 };
+  var cW = svgW - margin.left - margin.right;
+
+  var maxVal = Math.max.apply(Math, data.map(function(d) { return d[valueKey] || 0; })) * 1.1;
+
+  return React.createElement('svg', { width: '100%', height: svgH, viewBox: '0 0 ' + svgW + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' },
+    data.map(function(d, i) {
+      var y = margin.top + i * 44;
+      var barW = ((d[valueKey] || 0) / maxVal) * cW;
+      var fillColor = i === 2 ? '#10B981' : (valueColor || '#DF6B33');
+      return React.createElement(React.Fragment, { key: i },
+        React.createElement('text', { x: margin.left - 8, y: y + 24, fill: '#9CA3AF', fontSize: 12, textAnchor: 'end', fontFamily: 'Inter, sans-serif' }, d[labelKey]),
+        React.createElement('rect', { x: margin.left, y: y + 8, width: barW, height: 24, fill: fillColor, rx: 4, opacity: i === 2 ? 1 : 0.75 }),
+        React.createElement('text', { x: margin.left + barW + 6, y: y + 24, fill: fillColor, fontSize: 12, fontFamily: 'Inter, sans-serif', fontWeight: 600 },
+          formatVal ? formatVal(d[valueKey]) : d[valueKey]
+        )
+      );
+    })
+  );
+}
+
+// Pie Chart
+function PieChart(_ref5) {
+  var data = _ref5.data, size = _ref5.size, innerRadius = _ref5.innerRadius;
+
+  var cx = size / 2, cy = size / 2;
+  var outerR = size / 2 - 10;
+  var innerR = innerRadius || outerR * 0.55;
+
+  var total = data.reduce(function(s, d) { return s + d.value; }, 0);
+  var angleStart = -90;
+
+  var paths = data.map(function(d, i) {
+    var angle = (d.value / total) * 360;
+    var startAngle = angleStart * (Math.PI / 180);
+    var endAngle = (angleStart + angle) * (Math.PI / 180);
+    var largeArc = angle > 180 ? 1 : 0;
+
+    var x1 = cx + outerR * Math.cos(startAngle);
+    var y1 = cy + outerR * Math.sin(startAngle);
+    var x2 = cx + outerR * Math.cos(endAngle);
+    var y2 = cy + outerR * Math.sin(endAngle);
+    var ix1 = cx + innerR * Math.cos(startAngle);
+    var iy1 = cy + innerR * Math.sin(startAngle);
+    var ix2 = cx + innerR * Math.cos(endAngle);
+    var iy2 = cy + innerR * Math.sin(endAngle);
+
+    var dAttr = angle >= 360
+      ? 'M ' + x1 + ',' + y1 + ' A ' + outerR + ',' + outerR + ' 0 1 1 ' + (x1 - 0.001) + ',' + y1 + ' A ' + innerR + ',' + innerR + ' 0 1 0 ' + ix1 + ',' + iy1 + ' Z'
+      : 'M ' + x1 + ',' + y1 + ' A ' + outerR + ',' + outerR + ' 0 ' + largeArc + ' 1 ' + x2 + ',' + y2 + ' L ' + ix2 + ',' + iy2 + ' A ' + innerR + ',' + innerR + ' 0 ' + largeArc + ' 0 ' + ix1 + ',' + iy1 + ' Z';
+
+    angleStart += angle;
+    return React.createElement('path', { key: i, d: dAttr, fill: d.color, stroke: '#111827', strokeWidth: 2 });
+  });
+
+  return React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' } },
+    React.createElement('div', { style: { width: size + 'px', height: size + 'px', flexShrink: 0 } },
+      React.createElement('svg', { width: size, height: size, viewBox: '0 0 ' + size + ' ' + size }, paths)
+    ),
+    React.createElement('div', { style: { flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' } },
+      data.map(function(d, i) {
+        return React.createElement('div', { key: i, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+          React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5rem' } },
+            React.createElement('span', { style: { width: 10, height: 10, borderRadius: '50%', background: d.color, display: 'inline-block', flexShrink: 0 } }),
+            React.createElement('span', { style: { color: '#D1D5DB', fontSize: '0.75rem' } }, d.name)
+          ),
+          React.createElement('span', { style: { color: '#9CA3AF', fontSize: '0.75rem', fontWeight: 600 } }, d.value + '%')
+        );
+      })
+    )
+  );
+}
+
+// Combo Chart (Bar + Line)
+function ComboChart(_ref6) {
+  var data = _ref6.data, xKey = _ref6.xKey, bars = _ref6.bars, lines = _ref6.lines, height = _ref6.height;
+
+  var svgW = 800, svgH = height || 280;
+  var margin = { top: 10, right: 10, bottom: 30, left: 55 };
+  var cW = svgW - margin.left - margin.right;
+  var cH = svgH - margin.top - margin.bottom;
+
+  var barValues = []; bars.forEach(function(b) { data.forEach(function(d) { barValues.push(d[b.key] || 0); }); });
+  var lineValues = []; lines.forEach(function(l) { data.forEach(function(d) { lineValues.push(d[l.key] || 0); }); });
+  var maxBar = Math.max.apply(Math, barValues) * 1.1;
+  var maxLine = Math.max.apply(Math, lineValues) * 1.1;
+
+  var xStep = cW / (data.length || 1);
+  var barGroupW = xStep * 0.7;
+  var barW = barGroupW / bars.length;
+
+  function getBX(i, barIdx) {
+    return margin.left + i * xStep + (barIdx * barW) + (barGroupW - bars.length * barW) / 2;
+  }
+  function getY(v, max) { return margin.top + cH - (v / max) * cH; }
+
+  var yTicks = [0, 0.25, 0.5, 0.75, 1].map(function(t) { return Math.round(maxBar * t); });
+
+  var yLabelsL = yTicks.map(function(v, i) {
+    var y = margin.top + cH - (i / 4) * cH;
+    return React.createElement(React.Fragment, { key: 'l' + i },
+      React.createElement('text', { x: margin.left - 8, y: y + 4, fill: '#9CA3AF', fontSize: 11, textAnchor: 'end', fontFamily: 'Inter, sans-serif' }, '$' + (v / 1000) + 'K'),
+      React.createElement('line', { x1: margin.left, y1: y, x2: svgW - margin.right, y2: y, stroke: '#1F2937', strokeDasharray: '3,3' })
+    );
+  });
+
+  var yLabelsR = [0, 0.25, 0.5, 0.75, 1].map(function(t, i) {
+    var v = Math.round(maxLine * t);
+    var y = margin.top + cH - (i / 4) * cH;
+    return React.createElement('text', { key: 'r' + i, x: svgW - margin.right + 8, y: y + 4, fill: '#9CA3AF', fontSize: 11, textAnchor: 'start', fontFamily: 'Inter, sans-serif' }, v);
+  });
+
+  var barElems = bars.map(function(b, bi) {
+    return data.map(function(d, i) {
+      var bh = ((d[b.key] || 0) / maxBar) * cH;
+      return React.createElement('rect', {
+        key: bi + '-' + i, x: getBX(i, bi), y: getY(d[b.key] || 0, maxBar),
+        width: Math.max(barW - 2, 2), height: bh, fill: b.color, rx: 3, opacity: 0.9
+      });
+    });
+  });
+
+  var lineElems = lines.map(function(l, li) {
+    var pts = data.map(function(d, i) {
+      return { x: margin.left + i * xStep + xStep / 2, y: getY(d[l.key] || 0, maxLine) };
+    });
+    var pathD = pts.map(function(p, i) { return (i === 0 ? 'M' : 'L') + p.x + ',' + p.y; }).join('');
+    return React.createElement(React.Fragment, { key: l.key },
+      React.createElement('path', { d: pathD, stroke: l.color, strokeWidth: 2, fill: 'none', strokeDasharray: l.dashed ? '5,5' : '' }),
+      pts.map(function(p, i) {
+        return React.createElement('circle', { key: i, cx: p.x, cy: p.y, r: 3, fill: l.color, stroke: '#111827', strokeWidth: 1.5 });
+      })
+    );
+  });
+
+  var xLabels = data.map(function(d, i) {
+    return React.createElement('text', {
+      key: i, x: margin.left + i * xStep + xStep / 2, y: svgH - 5,
+      fill: '#9CA3AF', fontSize: 12, textAnchor: 'middle', fontFamily: 'Inter, sans-serif'
+    }, d[xKey]);
+  });
+
+  var legends = [
+    ...bars.map(function(b, i) {
+      return React.createElement('div', { key: 'b' + i, style: { display: 'flex', alignItems: 'center', gap: '0.375rem' } },
+        React.createElement('div', { style: { width: 12, height: 12, borderRadius: 2, background: b.color } }),
+        React.createElement('span', { style: { fontSize: '0.75rem', color: '#9CA3AF' } }, b.name)
+      );
+    }),
+    ...lines.map(function(l, i) {
+      return React.createElement('div', { key: 'l' + i, style: { display: 'flex', alignItems: 'center', gap: '0.375rem' } },
+        React.createElement('div', {
+          style: {
+            width: 20, height: 2,
+            background: l.dashed ? 'transparent' : l.color,
+            borderTop: l.dashed ? '2px dashed ' + l.color : '2px solid ' + l.color
+          }
+        }),
+        React.createElement('span', { style: { fontSize: '0.75rem', color: '#9CA3AF' } }, l.name)
+      );
+    })
+  ];
+
+  return React.createElement('div', { style: { position: 'relative' } },
+    React.createElement('div', { style: { display: 'flex', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap', alignItems: 'center' } }, legends),
+    React.createElement('svg', { width: '100%', height: svgH, viewBox: '0 0 ' + svgW + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' },
+      yLabelsL, yLabelsR, barElems, lineElems, xLabels
+    )
+  );
+}
+
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+function StatCard(_ref7) {
+  var icon = _ref7.icon, label = _ref7.label, value = _ref7.value, sub = _ref7.sub, color = _ref7.color, trend = _ref7.trend;
+  return React.createElement('div', { className: 'card flex items-center gap-4' },
+    React.createElement('div', { className: 'stat-icon ' + color },
+      React.createElement(Icon, { name: icon, size: 22 })
+    ),
+    React.createElement('div', { style: { flex: 1, minWidth: 0 } },
+      React.createElement('p', { style: { color: '#9CA3AF', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, label),
+      React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' } },
+        React.createElement('p', { style: { fontFamily: 'Poppins, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: 'white' } }, value),
+        trend && React.createElement('span', { className: 'trend-badge ' + (trend === 'up' ? 'trend-up' : 'trend-down'), style: { background: trend === 'up' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)' } },
+          React.createElement(Icon, { name: trend === 'up' ? 'arrow-up' : 'arrow-down', size: 10 }),
+          sub
+        )
+      ),
+      trend && sub && React.createElement('p', { style: { color: '#6B7280', fontSize: '0.7rem', marginTop: '0.125rem' } }, sub)
+    )
+  );
+}
+
+// ─── KPI Grid ────────────────────────────────────────────────────────────────
+function KpiGrid(_ref8) {
+  var variant = _ref8.variant;
+  if (variant === 'revenue') {
+    return React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' } },
+      React.createElement(StatCard, { icon: 'dollar-sign', label: 'Total Revenue', value: fmtK(totalRevenue), color: 'text-emerald-400', trend: 'up', sub: '+' + revGrowth + '%' }),
+      React.createElement(StatCard, { icon: 'trending-up', label: 'Revenue Growth', value: '+' + revGrowth + '%', color: 'text-blue-400', trend: 'up', sub: 'MoM' }),
+      React.createElement(StatCard, { icon: 'shopping-cart', label: 'Total Orders', value: totalOrders.toLocaleString(), color: 'text-purple-400', sub: 'AOV ' + fmt(avgOrderValue) }),
+      React.createElement(StatCard, { icon: 'bar-chart', label: 'Best Month', value: fmt(Math.max.apply(Math, revenueData.map(function(d) { return d.revenue; }))), color: 'text-amber-400', sub: 'December 2025' })
+    );
+  }
+  if (variant === 'marketing') {
+    return React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' } },
+      React.createElement(StatCard, { icon: 'wallet', label: 'Total Ad Spend', value: fmtK(totalSpend), color: 'text-red-400', sub: 'All channels' }),
+      React.createElement(StatCard, { icon: 'banknote', label: 'Total Generated', value: fmtK(totalMktRevenue), color: 'text-emerald-400', trend: 'up', sub: '+' + Math.round((totalMktRevenue - totalSpend) / totalSpend * 100) + '%' }),
+      React.createElement(StatCard, { icon: 'percent', label: 'Avg. ROI', value: avgROI + '%', color: 'text-blue-400', trend: 'up', sub: 'Across channels' }),
+      React.createElement(StatCard, { icon: 'star', label: 'Best Channel', value: 'Email', color: 'text-purple-400', trend: 'up', sub: 'ROI 1475%' })
+    );
+  }
+  return React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' } },
+    React.createElement(StatCard, { icon: 'dollar-sign', label: 'Total Revenue', value: fmtK(totalRevenue), color: 'text-emerald-400', trend: 'up', sub: '+' + revGrowth + '%' }),
+    React.createElement(StatCard, { icon: 'shopping-cart', label: 'Total Orders', value: totalOrders.toLocaleString(), color: 'text-blue-400', sub: 'All categories' }),
+    React.createElement(StatCard, { icon: 'credit-card', label: 'Avg. Order Value', value: fmt(avgOrderValue), color: 'text-purple-400', sub: 'Per transaction' }),
+    React.createElement(StatCard, { icon: 'users', label: 'Total Visitors', value: (totalVisitors / 1000).toFixed(1) + 'K', color: 'text-amber-400', sub: 'All channels' })
+  );
+}
+
+// ─── Section Title ────────────────────────────────────────────────────────────
+function SectionTitle(_ref9) {
+  var icon = _ref9.icon, title = _ref9.title, color = _ref9.color || '#DF6B33';
+  return React.createElement('div', { className: 'section-title' },
+    React.createElement('div', {
+      style: {
+        width: 28, height: 28, borderRadius: '0.5rem', background: color + '18',
+        border: '1px solid ' + color + '30',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+      }
+    },
+      React.createElement(Icon, { name: icon, size: 15, color: color })
+    ),
+    React.createElement('span', { style: { color: '#F3F4F6' } }, title)
+  );
+}
+
+// ─── Overview Tab ────────────────────────────────────────────────────────────
+function OverviewTab() {
+  return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '1.5rem' } },
+    React.createElement(KpiGrid, { variant: 'overview' }),
+
+    // Revenue vs Target
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'target', title: 'Revenue vs. Target', color: '#3B82F6' }),
+      React.createElement(BarChart, {
+        data: monthlyTarget, xKey: 'month',
+        bars: [
+          { key: 'target', color: '#374151', name: 'Target' },
+          { key: 'actual', color: '#DF6B33', name: 'Actual' }
+        ],
+        height: 280,
+        formatY: function(v) { return '$' + (v / 1000) + 'K'; }
+      })
+    ),
+
+    // Category pie + Daily sales
+    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' } },
+      React.createElement('div', { className: 'card' },
+        React.createElement(SectionTitle, { icon: 'pie-chart', title: 'Revenue by Category' }),
+        React.createElement(PieChart, { data: categoryData, size: 180 })
+      ),
+      React.createElement('div', { className: 'card' },
+        React.createElement(SectionTitle, { icon: 'bar-chart-2', title: 'Daily Sales This Week' }),
+        React.createElement(LineChart, {
+          data: dailySales, xKey: 'day',
+          lines: [{ key: 'sales', color: '#DF6B33' }],
+          height: 208, fillBelow: true, areaGradId: 'gradDaily'
+        })
+      )
+    ),
+
+    // Top Products
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'trophy', title: 'Top Selling Products' }),
+      React.createElement('div', { style: { overflowX: 'auto' } },
+        React.createElement('table', null,
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              React.createElement('th', { style: { width: 32 } },
+                React.createElement(Icon, { name: 'zap', size: 14, color: '#6B7280' })
+              ),
+              React.createElement('th', null, 'Product'),
+              React.createElement('th', { className: 'hide-mobile' },
+                React.createElement(Icon, { name: 'tag', size: 14, color: '#6B7280' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'dollar-sign', size: 14, color: '#10B981' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'package', size: 14, color: '#3B82F6' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'trending-up', size: 14, color: '#10B981' })
+              )
+            )
+          ),
+          React.createElement('tbody', null,
+            topProducts.map(function(p, i) {
+              var catColor = p.category === 'Electronics' ? '#DF6B33' : p.category === 'Fashion' ? '#3B82F6' : p.category === 'Home & Living' ? '#10B981' : p.category === 'Beauty' ? '#8B5CF6' : '#F59E0B';
+              var catBg = p.category === 'Electronics' ? 'rgba(223,107,51,0.12)' : p.category === 'Fashion' ? 'rgba(59,130,246,0.12)' : p.category === 'Home & Living' ? 'rgba(16,185,129,0.12)' : p.category === 'Beauty' ? 'rgba(139,92,246,0.12)' : 'rgba(245,158,11,0.12)';
+              var medalColor = i === 0 ? '#F59E0B' : i === 1 ? '#9CA3AF' : i === 2 ? '#CD7F32' : null;
+              return React.createElement('tr', { key: i },
+                React.createElement('td', { style: { color: '#6B7280', textAlign: 'center', width: 32 } },
+                  medalColor ? React.createElement(Icon, { name: 'crown', size: 15, color: medalColor, fill: medalColor })
+                    : React.createElement('span', { style: { color: '#4B5563', fontSize: '0.75rem' } }, p.rank)
+                ),
+                React.createElement('td', { style: { color: '#E5E7EB', fontWeight: 500, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } },
+                  React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5rem' } },
+                    React.createElement('div', {
+                      style: {
+                        width: 28, height: 28, borderRadius: '0.5rem', background: catBg,
+                        border: '1px solid ' + catColor.replace(')', ',0.3)').replace('rgb', 'rgba'),
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                      }
+                    },
+                      React.createElement(Icon, { name: p.icon, size: 14, color: catColor })
+                    ),
+                    p.name
+                  )
+                ),
+                React.createElement('td', { style: { color: '#9CA3AF' }, className: 'hide-mobile' },
+                  React.createElement('span', {
+                    style: {
+                      display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                      background: catBg,
+                      border: '1px solid ' + catColor.replace(')', ',0.25)').replace('rgb', 'rgba'),
+                      borderRadius: '0.375rem', padding: '0.125rem 0.5rem', fontSize: '0.7rem', color: catColor
+                    }
+                  }, p.category)
+                ),
+                React.createElement('td', { style: { textAlign: 'right', color: '#E5E7EB' } }, fmt(p.revenue)),
+                React.createElement('td', { style: { textAlign: 'right', color: '#9CA3AF' } }, p.units.toLocaleString()),
+                React.createElement('td', { style: { textAlign: 'right' } },
+                  React.createElement('span', { style: { display: 'inline-flex', alignItems: 'center', gap: '0.2rem', background: 'rgba(16,185,129,0.1)', color: '#10B981', padding: '0.125rem 0.5rem', borderRadius: '0.375rem', fontSize: '0.75rem', fontWeight: 600 } },
+                    React.createElement(Icon, { name: 'trending-up', size: 11, color: '#10B981' }),
+                    p.growth
+                  )
+                )
+              );
+            })
+          )
+        )
+      )
+    )
+  );
+}
+
+// ─── Revenue Tab ──────────────────────────────────────────────────────────────
+function RevenueTab() {
+  return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '1.5rem' } },
+    React.createElement(KpiGrid, { variant: 'revenue' }),
+
+    // Combo chart
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'line-chart', title: 'Monthly Revenue & Orders' }),
+      React.createElement(ComboChart, {
+        data: revenueData, xKey: 'month',
+        bars: [{ key: 'revenue', color: '#DF6B33', name: 'Revenue ($)' }],
+        lines: [
+          { key: 'orders', color: '#3B82F6', name: 'Orders' },
+          { key: 'visitors', color: '#10B981', name: 'Visitors', dashed: true }
+        ],
+        height: 288
+      })
+    ),
+
+    // Monthly table
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'table', title: 'Monthly Revenue Breakdown' }),
+      React.createElement('div', { style: { overflowX: 'auto' } },
+        React.createElement('table', null,
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              React.createElement('th', null,
+                React.createElement(Icon, { name: 'calendar', size: 14, color: '#6B7280' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'dollar-sign', size: 14, color: '#10B981' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'shopping-cart', size: 14, color: '#3B82F6' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'credit-card', size: 14, color: '#8B5CF6' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' }, className: 'hide-mobile' },
+                React.createElement(Icon, { name: 'users', size: 14, color: '#F59E0B' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' }, className: 'hide-mobile' },
+                React.createElement(Icon, { name: 'target', size: 14, color: '#10B981' })
+              )
+            )
+          ),
+          React.createElement('tbody', null,
+            revenueData.map(function(d, i) {
+              var conv = ((d.orders / d.visitors) * 100).toFixed(2);
+              var aov = Math.round(d.revenue / d.orders);
+              var prevRev = i > 0 ? revenueData[i - 1].revenue : d.revenue;
+              var revTrend = d.revenue >= prevRev ? 'up' : 'down';
+              return React.createElement('tr', { key: i },
+                React.createElement('td', { style: { color: '#E5E7EB', fontWeight: 500 } }, d.month),
+                React.createElement('td', { style: { textAlign: 'right' } },
+                  React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.375rem' } },
+                    React.createElement('span', { style: { color: '#E5E7EB', fontWeight: 600 } }, fmt(d.revenue)),
+                    React.createElement('span', {
+                      style: {
+                        display: 'inline-flex', alignItems: 'center', gap: '0.15rem',
+                        background: revTrend === 'up' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                        color: revTrend === 'up' ? '#10B981' : '#EF4444',
+                        padding: '0.1rem 0.375rem', borderRadius: '0.375rem', fontSize: '0.65rem', fontWeight: 600
+                      }
+                    },
+                      React.createElement(Icon, { name: revTrend === 'up' ? 'trending-up' : 'trending-down', size: 10, color: revTrend === 'up' ? '#10B981' : '#EF4444' })
+                    )
+                  )
+                ),
+                React.createElement('td', { style: { textAlign: 'right', color: '#9CA3AF' } }, d.orders),
+                React.createElement('td', { style: { textAlign: 'right', color: '#9CA3AF' } }, fmt(aov)),
+                React.createElement('td', { style: { textAlign: 'right', color: '#9CA3AF' }, className: 'hide-mobile' }, d.visitors.toLocaleString()),
+                React.createElement('td', { style: { textAlign: 'right' }, className: 'hide-mobile' },
+                  React.createElement('span', { className: 'trend-badge', style: { background: 'rgba(16,185,129,0.1)', color: '#10B981' } },
+                    React.createElement(Icon, { name: 'zap', size: 10 }),
+                    conv + '%'
+                  )
+                )
+              );
+            })
+          ),
+          React.createElement('tfoot', null,
+            React.createElement('tr', null,
+              React.createElement('td', null, 'Total'),
+              React.createElement('td', { style: { textAlign: 'right' } }, fmt(totalRevenue)),
+              React.createElement('td', { style: { textAlign: 'right' } }, totalOrders.toLocaleString()),
+              React.createElement('td', { style: { textAlign: 'right' } }, fmt(avgOrderValue)),
+              React.createElement('td', { style: { textAlign: 'right' }, className: 'hide-mobile' }, (totalVisitors / 1000).toFixed(1) + 'K'),
+              React.createElement('td', { style: { textAlign: 'right' }, className: 'hide-mobile' }, ((totalOrders / totalVisitors) * 100).toFixed(2) + '%')
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+// ─── Marketing Tab ───────────────────────────────────────────────────────────
+function MarketingTab() {
+  return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '1.5rem' } },
+    React.createElement(KpiGrid, { variant: 'marketing' }),
+
+    // ROI horizontal bar
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'activity', title: 'Marketing ROI by Channel' }),
+      React.createElement(HBarChart, {
+        data: marketingData, labelKey: 'channel', valueKey: 'roi',
+        valueColor: '#DF6B33', formatVal: function(v) { return v + '%'; }
+      })
+    ),
+
+    // Spend vs Revenue
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'git-compare', title: 'Spend vs Revenue by Channel' }),
+      React.createElement(BarChart, {
+        data: marketingData, xKey: 'channel',
+        bars: [
+          { key: 'revenue', color: '#10B981', name: 'Revenue ($)' },
+          { key: 'spend', color: '#3B82F6', name: 'Spend ($)' }
+        ],
+        height: 260,
+        formatY: function(v) { return '$' + (v / 1000) + 'K'; }
+      })
+    ),
+
+    // Marketing table
+    React.createElement('div', { className: 'card' },
+      React.createElement(SectionTitle, { icon: 'table', title: 'Marketing Channels Performance' }),
+      React.createElement('div', { style: { overflowX: 'auto' } },
+        React.createElement('table', null,
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              React.createElement('th', null,
+                React.createElement(Icon, { name: 'zap', size: 14, color: '#6B7280' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'wallet', size: 14, color: '#EF4444' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'dollar-sign', size: 14, color: '#10B981' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'trending-up', size: 14, color: '#3B82F6' })
+              ),
+              React.createElement('th', { style: { textAlign: 'right' } },
+                React.createElement(Icon, { name: 'percent', size: 14, color: '#8B5CF6' })
+              )
+            )
+          ),
+          React.createElement('tbody', null,
+            marketingData.map(function(d, i) {
+              var profit = d.revenue - d.spend;
+              var profitColor = profit > 0 ? '#10B981' : '#EF4444';
+              var roiClass = i === 2 ? 'roi-high' : 'roi-normal';
+              return React.createElement('tr', { key: i },
+                React.createElement('td', null,
+                  React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5rem' } },
+                    React.createElement('div', {
+                      style: {
+                        width: 30, height: 30, borderRadius: '0.5rem',
+                        background: d.channel === 'Google Ads' ? 'rgba(234,67,53,0.12)' :
+                                    d.channel === 'Facebook Ads' ? 'rgba(66,103,178,0.12)' :
+                                    d.channel === 'Email' ? 'rgba(16,185,129,0.12)' :
+                                    d.channel === 'SEO / Blog' ? 'rgba(34,197,94,0.12)' :
+                                    d.channel === 'Influencer' ? 'rgba(237,73,172,0.12)' :
+                                    'rgba(139,92,246,0.12)',
+                        border: '1px solid ' + (
+                          d.channel === 'Google Ads' ? 'rgba(234,67,53,0.3)' :
+                          d.channel === 'Facebook Ads' ? 'rgba(66,103,178,0.3)' :
+                          d.channel === 'Email' ? 'rgba(16,185,129,0.3)' :
+                          d.channel === 'SEO / Blog' ? 'rgba(34,197,94,0.3)' :
+                          d.channel === 'Influencer' ? 'rgba(237,73,172,0.3)' :
+                          'rgba(139,92,246,0.3)'),
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                      }
+                    },
+                      React.createElement(Icon, {
+                        name: d.icon || 'zap', size: 15,
+                        color: d.channel === 'Google Ads' ? '#EA4335' :
+                               d.channel === 'Facebook Ads' ? '#4267B2' :
+                               d.channel === 'Email' ? '#10B981' :
+                               d.channel === 'SEO / Blog' ? '#22C55E' :
+                               d.channel === 'Influencer' ? '#ED73AC' :
+                               '#8B5CF6'
+                      })
+                    ),
+                    React.createElement('span', { style: { color: '#E5E7EB', fontWeight: 500 } }, d.channel)
+                  )
+                ),
+                React.createElement('td', { style: { textAlign: 'right', color: '#9CA3AF' } }, fmt(d.spend)),
+                React.createElement('td', { style: { textAlign: 'right', color: '#E5E7EB' } }, fmt(d.revenue)),
+                React.createElement('td', { style: { textAlign: 'right', fontWeight: 600, color: profitColor } },
+                  React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.375rem' } },
+                    React.createElement('span', {
+                      style: {
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: 18, height: 18, borderRadius: '50%',
+                        background: profit > 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                      }
+                    },
+                      React.createElement(Icon, { name: profit > 0 ? 'trending-up' : 'trending-down', size: 10, color: profitColor })
+                    ),
+                    fmt(profit)
+                  )
+                ),
+                React.createElement('td', { style: { textAlign: 'right' } },
+                  React.createElement('span', {
+                    style: {
+                      display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                      padding: '0.125rem 0.5rem', borderRadius: '9999px',
+                      fontSize: '0.75rem', fontWeight: 600,
+                      background: i === 2 ? 'rgba(16,185,129,0.15)' : 'rgba(223,107,51,0.12)',
+                      color: i === 2 ? '#10B981' : '#DF6B33'
+                    }
+                  },
+                    React.createElement(Icon, { name: 'zap', size: 10, color: i === 2 ? '#10B981' : '#DF6B33' }),
+                    d.roi + '%'
+                  )
+                )
+              );
+            })
+          ),
+          React.createElement('tfoot', null,
+            React.createElement('tr', null,
+              React.createElement('td', null,
+                React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5rem' } },
+                  React.createElement(Icon, { name: 'layers', size: 14, color: '#9CA3AF' }),
+                  'Total'
+                )
+              ),
+              React.createElement('td', { style: { textAlign: 'right' } }, fmt(totalSpend)),
+              React.createElement('td', { style: { textAlign: 'right' } }, fmt(totalMktRevenue)),
+              React.createElement('td', { style: { textAlign: 'right', color: '#10B981' } }, fmt(totalMktRevenue - totalSpend)),
+              React.createElement('td', { style: { textAlign: 'right', color: '#DF6B33' } }, avgROI + '%')
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+function App() {
+  var _React$useState = React.useState('overview');
+  var activeTab = _React$useState[0];
+  var setActiveTab = _React$useState[1];
+  var _React$useState2 = React.useState('12m');
+  var period = _React$useState2[0];
+  var setPeriod = _React$useState2[1];
+
+  var tabs = [
+    { id: 'overview', label: 'Overview', icon: 'layout-dashboard' },
+    { id: 'revenue', label: 'Revenue', icon: 'bar-chart' },
+    { id: 'marketing', label: 'Marketing', icon: 'activity' },
+  ];
+
+  function renderTab() {
+    if (activeTab === 'overview') return React.createElement(OverviewTab, null);
+    if (activeTab === 'revenue') return React.createElement(RevenueTab, null);
+    if (activeTab === 'marketing') return React.createElement(MarketingTab, null);
+  }
+
+  return React.createElement('div', { className: 'min-h-screen', style: { padding: '1.5rem', maxWidth: '1280px', margin: '0 auto' } },
+
+    // Tabs
+    React.createElement('div', { style: { marginBottom: '1.5rem' } },
+      React.createElement('div', {
+        style: {
+          display: 'inline-flex',
+          background: '#111827',
+          border: '1px solid #1F2937',
+          borderRadius: '1rem',
+          padding: '4px',
+          gap: '4px',
+          position: 'relative',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'
+        }
+      },
+        tabs.map(function(t) {
+          var isActive = activeTab === t.id;
+          var tabColors = { overview: '#10B981', revenue: '#3B82F6', marketing: '#8B5CF6' };
+          var tabColor = tabColors[t.id] || '#DF6B33';
+          var tabGradients = {
+            overview: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.08))',
+            revenue: 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.08))',
+            marketing: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.08))'
+          };
+
+          return React.createElement('button', {
+            key: t.id,
+            onClick: function() { setActiveTab(t.id); },
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.625rem 1.25rem',
+              borderRadius: '0.625rem',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '0.875rem',
+              fontWeight: isActive ? 600 : 500,
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+              background: isActive ? tabGradients[t.id] : 'transparent',
+              color: isActive ? 'white' : '#6B7280',
+              boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.3), inset 0 0 0 1px ' + tabColor + '50, inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
+              position: 'relative',
+              outline: 'none',
+              letterSpacing: '0.01em'
+            },
+            onMouseEnter: function(e) {
+              if (!isActive) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                e.currentTarget.style.color = '#D1D5DB';
+              }
+            },
+            onMouseLeave: function(e) {
+              if (!isActive) {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = '#6B7280';
+              }
+            }
+          },
+            React.createElement(Icon, { name: t.icon, size: 16, color: isActive ? tabColor : '#4B5563' }),
+            React.createElement('span', { style: { lineHeight: 1 } }, t.label),
+            isActive && React.createElement('div', {
+              style: {
+                width: 6, height: 6, borderRadius: '50%',
+                background: tabColor,
+                boxShadow: '0 0 6px ' + tabColor,
+                flexShrink: 0
+              }
+            })
+          );
+        })
+      )
+    ),
+
+    renderTab()
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+
+// Init Lucide icons after React renders
+lucide.createIcons();
+
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('currentUser');
+  window.location.href = 'login.html';
+}
+</script>
+
+</body>
+</html>
