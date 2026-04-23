@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — E-Commerce Report</title>
+  <title>Reports — ShopDash</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DF6B33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3h7v7H3z'/%3E%3Cpath d='M14 3h7v7h-7z'/%3E%3Cpath d='M14 14h7v7h-7z'/%3E%3Cpath d='M3 14h7v7H3z'/%3E%3C/svg%3E"/>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -49,9 +49,65 @@
     @media (max-width: 640px) {
       .hide-mobile { display: none; }
     }
+    /* Sidebar */
+    .nav-item { transition: all 0.2s; }
+    .nav-item:hover { background: rgba(223,107,51,0.1); color: #DF6B33; }
+    .nav-item.active { background: rgba(223,107,51,0.15); color: #DF6B33; border-color: rgba(223,107,51,0.3); }
+    .sidebar-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
   </style>
 </head>
 <body>
+
+<!-- Top Horizontal Sidebar -->
+<nav class="sticky top-0 z-50" style="background:#111827;border-bottom:1px solid #1F2937" class="sidebar-shadow">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:64px">
+      <!-- Logo -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:12px;background:#090A14;border:1px solid #1F2937;display:flex;align-items:center;justify-content:center">
+          <i data-lucide="layout-grid" style="width:20px;height:20px;color:#DF6B33"></i>
+        </div>
+        <span style="font-family:Poppins,sans-serif;font-weight:700;font-size:18px;color:white" class="hidden sm:block">ShopDash</span>
+      </div>
+
+      <!-- Nav Items -->
+      <div style="display:flex;align-items:center;gap:4px;overflow-x:auto;padding:4px 0" class="hide-scrollbar">
+        <a href="home.html" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="home" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Home</span>
+        </a>
+        <a href="products.html" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="package" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Products</span>
+        </a>
+        <a href="charts.html" class="nav-item active" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;white-space:nowrap;text-decoration:none">
+          <i data-lucide="bar-chart-2" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Reports</span>
+        </a>
+        <a href="#about" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="info" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">About</span>
+        </a>
+        <a href="#contact" class="nav-item" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid transparent;white-space:nowrap;color:#9CA3AF;text-decoration:none">
+          <i data-lucide="mail" style="width:16px;height:16px"></i>
+          <span class="hidden md:inline">Contact</span>
+        </a>
+      </div>
+
+      <!-- User Menu -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="logout()" style="display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:8px 12px;color:#EF4444;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s">
+          <i data-lucide="log-out" style="width:16px;height:16px;color:#EF4444"></i>
+          <span style="display:none" class="sm:inline">Logout</span>
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;background:#090A14;border:1px solid #1F2937;border-radius:12px;padding:6px 12px">
+          <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#DF6B33,#C45A28);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;font-family:Poppins,sans-serif">N</div>
+          <span style="font-size:14px;color:#D1D5DB" class="hidden sm:block">User</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
 
 <div id="root"></div>
 
@@ -1113,148 +1169,6 @@ function App() {
 
   return React.createElement('div', { className: 'min-h-screen', style: { padding: '1.5rem', maxWidth: '1280px', margin: '0 auto' } },
 
-    // Header
-    React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' } },
-      React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0.75rem' } },
-        // Brand icon
-        React.createElement('div', {
-          style: {
-            width: 44, height: 44, borderRadius: '0.875rem',
-            background: '#111827', border: '1px solid #1F2937',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            boxShadow: '0 0 20px rgba(223,107,51,0.15)'
-          }
-        },
-          React.createElement(Icon, { name: 'scan-face', size: 24, color: '#DF6B33' })
-        ),
-        React.createElement('div', null,
-          React.createElement('h1', { style: { fontFamily: 'Poppins, sans-serif', fontSize: '1.5rem', fontWeight: 800, color: 'white' } }, 'E-Commerce Dashboard'),
-          React.createElement('p', { style: { color: '#9CA3AF', fontSize: '0.8rem', marginTop: '0.125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' } },
-            React.createElement(Icon, { name: 'zap', size: 12, color: '#10B981' }),
-            'Real-time business intelligence & analytics'
-          )
-        )
-      ),
-      React.createElement('div', { style: { display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' } },
-        // Period filter
-        React.createElement('div', {
-          style: {
-            position: 'relative',
-            background: '#111827',
-            border: '1px solid #1F2937',
-            borderRadius: '0.75rem',
-            display: 'flex',
-            alignItems: 'center',
-            overflow: 'hidden',
-            transition: 'border-color 0.2s'
-          }
-        },
-          React.createElement('div', {
-            style: {
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '2.5rem',
-              height: '100%',
-              borderRight: '1px solid #1F2937',
-              background: 'rgba(255,255,255,0.02)',
-              flexShrink: 0
-            }
-          },
-            React.createElement(Icon, { name: 'calendar', size: 14, color: '#6B7280' })
-          ),
-          React.createElement('select', {
-            value: period,
-            onChange: function(e) { setPeriod(e.target.value); },
-            style: {
-              background: 'transparent',
-              border: 'none',
-              color: '#D1D5DB',
-              fontSize: '0.875rem',
-              padding: '0.5rem 0.75rem 0.5rem 0.5rem',
-              outline: 'none',
-              cursor: 'pointer',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-              appearance: 'none',
-              fontFamily: 'Inter, sans-serif'
-            }
-          },
-            React.createElement('option', { value: '7d' }, 'Last 7 days'),
-            React.createElement('option', { value: '30d' }, 'Last 30 days'),
-            React.createElement('option', { value: '12m' }, 'Last 12 months')
-          )
-        ),
-        // Filter
-        React.createElement('button', {
-          style: {
-            display: 'flex', alignItems: 'center', gap: '0.375rem',
-            background: '#111827', border: '1px solid #1F2937',
-            color: '#9CA3AF', fontSize: '0.875rem', borderRadius: '0.75rem',
-            padding: '0.5rem 0.75rem', cursor: 'pointer', transition: 'border-color 0.2s'
-          }
-        },
-          React.createElement(Icon, { name: 'filter', size: 14 }),
-          'Filter'
-        ),
-        // Refresh
-        React.createElement('button', {
-          style: {
-            width: 36, height: 36, borderRadius: '0.75rem',
-            background: '#111827', border: '1px solid #1F2937',
-            color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', transition: 'border-color 0.2s'
-          }
-        },
-          React.createElement(Icon, { name: 'refresh-cw', size: 14, color: '#3B82F6' })
-        ),
-        // Export
-        React.createElement('button', { className: 'cta-btn' },
-          React.createElement(Icon, { name: 'download', size: 14 }),
-          'Export'
-        ),
-        // User badge
-        currentUser && React.createElement('div', {
-          style: {
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            background: '#111827', border: '1px solid #1F2937',
-            borderRadius: '0.75rem', padding: '0.375rem 0.75rem 0.375rem 0.5rem'
-          }
-        },
-          React.createElement('div', {
-            style: {
-              width: 28, height: 28, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #DF6B33, #C45A28)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.75rem', fontWeight: 700, color: 'white',
-              flexShrink: 0, fontFamily: 'Poppins, sans-serif'
-            }
-          }, currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'),
-          React.createElement('span', { style: { color: '#D1D5DB', fontSize: '0.8rem', fontWeight: 500 } },
-            currentUser.name ? currentUser.name.split(' ')[0] : 'User'
-          )
-        ),
-        // Logout
-        React.createElement('button', {
-          onClick: function() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-          },
-          style: {
-            display: 'flex', alignItems: 'center', gap: '0.375rem',
-            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-            color: '#EF4444', fontSize: '0.8rem', borderRadius: '0.75rem',
-            padding: '0.5rem 0.875rem', cursor: 'pointer', transition: 'all 0.2s',
-            fontWeight: 500
-          }
-        },
-          React.createElement(Icon, { name: 'log-out', size: 14, color: '#EF4444' }),
-          'Logout'
-        )
-      )
-    ),
-
     // Tabs
     React.createElement('div', { style: { marginBottom: '1.5rem' } },
       React.createElement('div', {
@@ -1334,6 +1248,15 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+
+// Init Lucide icons after React renders
+lucide.createIcons();
+
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('currentUser');
+  window.location.href = 'login.html';
+}
 </script>
 
 </body>
