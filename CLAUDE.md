@@ -2,11 +2,75 @@
 
 ## Overview
 
-Two standalone HTML pages implementing a dark-themed authentication system using Tailwind CSS and Lucide icons. No framework — pure HTML/CSS/JS.
+Dark-themed e-commerce dashboard with authentication system using Tailwind CSS and Lucide icons. No framework — pure HTML/CSS/JS (except charts.html which uses React + Recharts).
 
 ---
 
 ## Pages
+
+### home.html (Trang chủ / Home)
+
+**Purpose:** Main landing page with dashboard overview, navigation sidebar, KPIs, mini charts, product table, about & contact sections.
+
+**Stack:** Tailwind CSS via CDN, Lucide Icons via CDN, Google Fonts (Poppins + Inter), No framework.
+
+**Layout:**
+- **Top Horizontal Sidebar (sticky):** Logo + 5 nav items (Home, Products, Reports, About, Contact) + notification bell + user menu
+- **Header:** Page title, period filter dropdown (7d/30d/12m), refresh button, export button
+- **Filter Tags:** Category filter chips (Tất cả, Điện tử, Thời trang, Nhà cửa, Làm đẹp, Thể thao)
+- **KPI Row:** 5 stat cards — Doanh thu, Đơn hàng, Sản phẩm, Khách hàng, Tỷ lệ chuyển đổi
+- **Charts Row:** 3 cards — Revenue 7-day bar chart, Orders 7-day bar chart, Top categories progress bars
+- **Products Table:** Best-selling products with search, category badges, revenue/sales/stock/growth columns
+- **Info Row:** About section (stats) + Contact section (email/phone/address cards)
+- **Footer:** Logo, copyright, login/register links
+
+**Actions:**
+- Filter by period (7d / 30d / 12m)
+- Filter by category
+- Search products
+- Refresh data (animated icon)
+- Export report (navigates to charts.html)
+- Navigate between pages via sidebar
+
+**Design:** Follows the same color palette, typography, card styling, and icon library as the rest of the project. Active nav item highlighted with primary color.
+
+---
+
+### products.html (Products)
+
+**Purpose:** Product listing page with search, filter, pagination, cart, and product detail modal.
+
+**Stack:** Tailwind CSS via CDN, Lucide Icons via CDN, Google Fonts (Poppins + Inter), No framework.
+
+**Language:** English (100%)
+
+**Layout:**
+- **Top Horizontal Sidebar (sticky):** Logo + 5 nav items + cart icon (with badge) + logout button + user badge
+- **Header:** Page title, refresh button
+- **Search Bar:** Full-width text input with search icon
+- **Category Filters:** Scrollable chip row (All, Electronics, Fashion, Home & Living, Beauty, Sports) + sort dropdown
+- **Product Grid:** Responsive 2→3→4→5 column grid of product cards (10 per page)
+- **Pagination:** Page buttons with prev/next, ellipsis for large page counts
+- **Footer:** Logo + copyright + links
+- **Product Detail Modal:** Full info overlay (image, badge, name, rating, price, description, stats, add-to-cart)
+- **Cart Sidebar:** Slide-in from right (item list, qty controls, remove, total, checkout)
+
+**Mock Data:** 15 products across 5 categories with realistic prices, icons, descriptions, ratings, and stock.
+
+**Actions:**
+- Search products (live filter by name/category/description)
+- Filter by category (chip buttons)
+- Sort by: Default, Price Low→High, Price High→Low, Best Sellers, Name A→Z
+- View product detail (modal with full info)
+- Add to cart (with toast notification, persists to localStorage)
+- Cart management: qty +/-, remove item
+- Checkout (clears cart, shows total)
+- Pagination (10 items/page)
+- Refresh (animated icon + toast)
+
+**Cart Storage:** `localStorage.setItem('cart', JSON.stringify([{id, qty}]))`
+
+---
 
 ### charts.html
 
@@ -130,6 +194,12 @@ Load with `lucide.createIcons()`. Re-run after dynamically changing icon names (
 
 ---
 
+## Language
+
+All pages use **English (100%)** for all UI text, labels, buttons, and content.
+
+---
+
 ## General Rules for Future Pages
 
 1. **Theme & Colors:** Always use the color tokens above. Do not introduce new colors without good reason.
@@ -145,7 +215,7 @@ Load with `lucide.createIcons()`. Re-run after dynamically changing icon names (
 
 ## Stack
 
-### login.html / register.html
+### home.html / products.html / login.html / register.html
 - Tailwind CSS via CDN (`https://cdn.tailwindcss.com`)
 - Lucide Icons via CDN
 - Google Fonts (Poppins + Inter)
