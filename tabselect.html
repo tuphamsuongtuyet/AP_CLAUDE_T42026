@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>So sánh 4 cách chọn tài liệu</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .card-demo {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card-demo h3 { color: #f8fafc; font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    .card-demo label { color: #94a3b8; font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; display: block; }
+
+    /* Tag style */
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #3b82f6; color: #fff; border-radius: 20px;
+      padding: 4px 12px; font-size: 0.82rem; margin: 3px;
+    }
+    .tag .remove-tag { cursor: pointer; font-weight: 700; opacity: 0.8; }
+    .tag .remove-tag:hover { opacity: 1; }
+
+    /* Quick add buttons */
+    .quick-add-btn {
+      background: #1e293b; border: 1px dashed #475569; color: #94a3b8;
+      border-radius: 20px; padding: 4px 12px; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s; margin: 3px;
+    }
+    .quick-add-btn:hover { border-color: #3b82f6; color: #3b82f6; background: #1e293b; }
+
+    /* Two column */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .doc-item { background: #334155; border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.2s; margin-bottom: 6px; }
+    .doc-item:hover { background: #3b82f6; color: #fff; }
+    .doc-item.selected { background: #3b82f6; color: #fff; }
+    .doc-item .icon { margin-right: 8px; }
+    .right-list .doc-item { background: #1e293b; border: 1px solid #334155; }
+    .right-list .doc-item .del { float: right; cursor: pointer; opacity: 0.6; }
+    .right-list .doc-item .del:hover { opacity: 1; color: #ef4444; }
+
+    /* Smart checklist */
+    .checklist-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .checklist-row select, .checklist-row input {
+      background: #334155; border: 1px solid #475569; color: #e2e8f0;
+      border-radius: 6px; padding: 6px 10px; font-size: 0.85rem;
+    }
+    .checklist-row select:focus, .checklist-row input:focus { outline: none; border-color: #3b82f6; }
+    .checklist-row .row-num { color: #475569; font-size: 0.8rem; min-width: 24px; }
+    .btn-add-row { background: transparent; border: 1px dashed #475569; color: #94a3b8; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 0.82rem; }
+    .btn-add-row:hover { border-color: #3b82f6; color: #3b82f6; }
+
+    /* Autocomplete */
+    .search-wrapper { position: relative; }
+    .doc-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 100;
+      background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+      max-height: 240px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .doc-dropdown.show { display: block; }
+    .doc-dropdown-item { padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .doc-dropdown-item:hover { background: #334155; }
+    .doc-dropdown-item.custom { border-top: 1px solid #334155; color: #3b82f6; font-style: italic; }
+
+    /* Tab nav */
+    .tab-nav { display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn {
+      background: #1e293b; border: 1px solid #334155; color: #94a3b8;
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: #3b82f6; color: #e2e8f0; }
+    .tab-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .section-title { color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 12px 0 6px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container py-4">
+
+  <h1 class="mb-4" style="font-size:1.4rem; font-weight:700; color:#f8fafc;">So sánh 4 cách chọn tài liệu</h1>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(1)">1. Autocomplete</button>
+    <button class="tab-btn" onclick="switchTab(2)">2. Templates</button>
+    <button class="tab-btn" onclick="switchTab(3)">3. Hai cột</button>
+    <button class="tab-btn" onclick="switchTab(4)">4. Smart Checklist</button>
+  </div>
+
+  <!-- ======================== TAB 1: Autocomplete ======================== -->
+  <div class="tab-panel active" id="tab1">
+    <div class="card-demo">
+      <h3>1. Multi-select với Gợi ý (Autocomplete)</h3>
+      <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">
+        Click vào thanh tìm kiếm → hiện danh sách gợi ý. Chọn nhiều mục. Gõ tay nếu không có trong danh sách.
+      </p>
+
+      <label>Chọn tài liệu</label>
+      <div class="search-wrapper">
+        <div id="tag-container-1" style="min-height:42px; background:#334155; border:1px solid #475569; border-radius:8px; padding:6px 8px; display:flex; flex-wrap:wrap; gap:4px; align-items:center; cursor:text;" onclick="document.getElementById('search-input-1').focus()">
+          <!-- tags go here -->
+          <input id="search-input-1" type="text" placeholder="Tìm hoặc gõ tài liệu mới..." style="background:transparent; border:none; outline:none; color:#e2e8f0; font-size:0.88rem; min-width:200px; flex:1;" autocomplete="off">
+        </div>
+        <div class="doc-dropdown" id="dropdown-1"></div>
+      </div>
+
+      <div id="selected-cards-1" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:14px;"></div>
+
+      <p id="output-1" style="margin-top:12px; color:#475569; font-size:0.82rem;"></p>
+    </div>
+  </div>
+
+  <!-- ======================== TAB 2: Templates ======================== -->
+  <div class="tab-panel" id="tab2">
+    <div class="card-demo">
+      <h3>2. Danh mục tài liệu mẫu (Templates)</h3>
+      <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">
+        Dùng tag có sẵn hoặc thêm nhanh bằng nút <strong style="color:#3b82f6">[+ Thêm]</strong>.
+      </p>
+
+      <label>Chosen Documents</label>
+      <div id="tag-container-2" style="min-height:42px; background:#334155; border:1px solid #475569; border-radius:8px; padding:8px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:12px;"></div>
+
+      <p class="section-title">Chọn nhanh</p>
+      <div>
+        <button class="quick-add-btn" onclick="addTemplate('Proposal')">[+] Proposal</button>
+        <button class="quick-add-btn" onclick="addTemplate('Project Plan')">[+] Project Plan</button>
+        <button class="quick-add-btn" onclick="addTemplate('SRS')">[+] SRS</button>
+        <button class="quick-add-btn" onclick="addTemplate('Design')">[+] Design</button>
+        <button class="quick-add-btn" onclick="addTemplate('Báo cáo tuần')">[+] Báo cáo tuần</button>
+        <button class="quick-add-btn" onclick="addTemplate('Source Code')">[+] Source Code</button>
+        <button class="quick-add-btn" onclick="addTemplate('Test Plan')">[+] Test Plan</button>
+        <button class="quick-add-btn" onclick="addTemplate('Handover Doc')">[+] Handover Doc</button>
+      </div>
+
+      <div style="margin-top:14px;">
+        <input id="custom-doc-2" type="text" placeholder="...hoặc gõ tài liệu tùy chỉnh" style="background:#334155; border:1px solid #475569; color:#e2e8f0; border-radius:6px; padding:6px 10px; font-size:0.85rem; width:240px;" onkeydown="if(event.key==='Enter'){addTemplate(this.value);this.value=''}">
+        <button class="quick-add-btn" onclick="addTemplate(document.getElementById('custom-doc-2').value);document.getElementById('custom-doc-2').value=''" style="border-style:solid;">Thêm</button>
+      </div>
+
+      <p id="output-2" style="margin-top:12px; color:#475569; font-size:0.82rem;"></p>
+    </div>
+  </div>
+
+  <!-- ======================== TAB 3: Two Columns ======================== -->
+  <div class="tab-panel" id="tab3">
+    <div class="card-demo">
+      <h3>3. Hai cột — Danh sách có sẵn &amp; Đã chọn</h3>
+      <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">
+        Click bên trái để thêm. Click <strong style="color:#ef4444">×</strong> bên phải để xóa.
+      </p>
+
+      <div class="two-col">
+        <div>
+          <label style="margin-bottom:8px;">Tài liệu có sẵn</label>
+          <div id="left-col">
+            <div class="doc-item" onclick="selectFromLeft(this, 'Proposal')"><span class="icon">📄</span>Proposal</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Project Plan')"><span class="icon">📋</span>Project Plan</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'SRS')"><span class="icon">📝</span>SRS (Software Requirements)</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Design Spec')"><span class="icon">🎨</span>Design Spec</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Báo cáo tuần')"><span class="icon">📊</span>Báo cáo tuần</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Source Code')"><span class="icon">💻</span>Source Code</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Test Plan')"><span class="icon">🧪</span>Test Plan</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Handover Doc')"><span class="icon">📦</span>Handover Doc</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'API Documentation')"><span class="icon">🔗</span>API Documentation</div>
+            <div class="doc-item" onclick="selectFromLeft(this, 'Risk Register')"><span class="icon">⚠️</span>Risk Register</div>
+          </div>
+        </div>
+        <div>
+          <label style="margin-bottom:8px;">Đã chọn</label>
+          <div class="right-list" id="right-col" style="min-height:200px; border:1px dashed #334155; border-radius:8px; padding:8px;"></div>
+        </div>
+      </div>
+
+      <p id="output-3" style="margin-top:12px; color:#475569; font-size:0.82rem;"></p>
+    </div>
+  </div>
+
+  <!-- ======================== TAB 4: Smart Checklist ======================== -->
+  <div class="tab-panel" id="tab4">
+    <div class="card-demo">
+      <h3>4. Smart Checklist — Dòng động với Dropdown + Input</h3>
+      <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">
+        Mỗi dòng là dropdown để chọn nhanh HOẶC gõ tùy chỉnh. Thêm/xóa dòng linh hoạt.
+      </p>
+
+      <label>Danh sách tài liệu</label>
+      <div id="checklist-container" style="margin-bottom:12px;"></div>
+
+      <button class="btn-add-row" onclick="addChecklistRow()">+ Thêm dòng mới</button>
+
+      <p id="output-4" style="margin-top:12px; color:#475569; font-size:0.82rem;"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===================== Common document list =====================
+  const docList = [
+    'Proposal', 'Project Plan', 'SRS', 'Design Spec', 'Báo cáo tuần',
+    'Source Code', 'Test Plan', 'Handover Doc', 'API Documentation',
+    'Risk Register', 'User Manual', 'Deployment Guide', 'SLA Document'
+  ];
+
+  const icons = {
+    'Proposal': '📄', 'Project Plan': '📋', 'SRS': '📝', 'Design Spec': '🎨',
+    'Báo cáo tuần': '📊', 'Source Code': '💻', 'Test Plan': '🧪',
+    'Handover Doc': '📦', 'API Documentation': '🔗', 'Risk Register': '⚠️',
+    'User Manual': '📖', 'Deployment Guide': '🚀', 'SLA Document': '🤝'
+  };
+  function getIcon(name) { return icons[name] || '📃'; }
+
+  // ===================== TAB 1: Autocomplete =====================
+  const selected1 = new Set();
+  const container1 = document.getElementById('tag-container-1');
+  const input1 = document.getElementById('search-input-1');
+  const dropdown1 = document.getElementById('dropdown-1');
+
+  function renderCards1() {
+    // Clear any leftover tags inside the search wrapper (they're shown as cards now)
+    container1.querySelectorAll('.tag').forEach(t => t.remove());
+    const cardsEl = document.getElementById('selected-cards-1');
+    cardsEl.innerHTML = '';
+    if (selected1.size === 0) {
+      cardsEl.innerHTML = '<span style="color:#475569; font-size:0.82rem; grid-column:1/-1;">Chưa chọn tài liệu nào</span>';
+    }
+    selected1.forEach(name => {
+      const card = document.createElement('div');
+      card.style.cssText = 'display:flex; align-items:center; justify-content:space-between; background:#334155; border:1px solid #475569; border-radius:10px; padding:10px 14px; transition:all 0.2s;';
+      card.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.3rem;">${getIcon(name)}</span>
+          <span style="color:#e2e8f0; font-size:0.88rem;">${name}</span>
+        </div>
+        <span onclick="removeTag1('${name.replace(/'/g,"\\'")}')" style="color:#ef4444; cursor:pointer; font-size:1.1rem; padding:2px 6px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='#ef444420'" onmouseout="this.style.background='transparent'">×</span>
+      `;
+      cardsEl.appendChild(card);
+    });
+    updateOutput1();
+  }
+
+  function removeTag1(name) {
+    selected1.delete(name);
+    renderCards1();
+  }
+
+  function addTag1(name) {
+    if (name && !selected1.has(name)) {
+      selected1.add(name);
+      input1.value = '';
+      renderCards1();
+    }
+    dropdown1.classList.remove('show');
+  }
+
+  input1.addEventListener('input', () => {
+    const val = input1.value.trim().toLowerCase();
+    dropdown1.innerHTML = '';
+    if (!val) {
+      docList.forEach(d => {
+        if (!selected1.has(d)) {
+          dropdown1.innerHTML += `<div class="doc-dropdown-item" onclick="addTag1('${d}')">${getIcon(d)} ${d}</div>`;
+        }
+      });
+      dropdown1.innerHTML += `<div class="doc-dropdown-item custom" onclick="addTag1('${input1.value.trim()}')">+ Thêm "${input1.value.trim()}"</div>`;
+    } else {
+      const matches = docList.filter(d => d.toLowerCase().includes(val) && !selected1.has(d));
+      matches.forEach(d => {
+        dropdown1.innerHTML += `<div class="doc-dropdown-item" onclick="addTag1('${d}')">${getIcon(d)} ${d}</div>`;
+      });
+      const hasExact = docList.includes(input1.value.trim()) || selected1.has(input1.value.trim());
+      if (!hasExact) {
+        dropdown1.innerHTML += `<div class="doc-dropdown-item custom" onclick="addTag1('${input1.value.trim()}')">+ Thêm "${input1.value.trim()}"</div>`;
+      }
+    }
+    dropdown1.classList.add('show');
+  });
+
+  input1.addEventListener('focus', () => {
+    if (!input1.value.trim()) {
+      dropdown1.innerHTML = docList.filter(d => !selected1.has(d)).map(d =>
+        `<div class="doc-dropdown-item" onclick="addTag1('${d}')">${getIcon(d)} ${d}</div>`
+      ).join('');
+      dropdown1.classList.add('show');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) dropdown1.classList.remove('show');
+  });
+
+  function updateOutput1() {
+    document.getElementById('output-1').textContent = selected1.size ? `Đã chọn: ${[...selected1].join(', ')}` : '';
+  }
+
+  // ===================== TAB 2: Templates =====================
+  const selected2 = new Set();
+
+  function renderTags2() {
+    const container = document.getElementById('tag-container-2');
+    container.innerHTML = '';
+    selected2.forEach(name => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.innerHTML = `${getIcon(name)} ${name} <span class="remove-tag" onclick="removeTag2('${name.replace(/'/g,"\\'")}')">×</span>`;
+      container.appendChild(tag);
+    });
+    if (selected2.size === 0) {
+      container.innerHTML = '<span style="color:#475569; font-size:0.82rem;">Chưa chọn tài liệu nào</span>';
+    }
+    updateOutput2();
+  }
+
+  function removeTag2(name) {
+    selected2.delete(name);
+    renderTags2();
+  }
+
+  function addTemplate(name) {
+    if (!name) return;
+    name = name.trim();
+    if (!selected2.has(name)) {
+      selected2.add(name);
+      renderTags2();
+    }
+  }
+
+  function updateOutput2() {
+    document.getElementById('output-2').textContent = selected2.size ? `Đã chọn: ${[...selected2].join(', ')}` : '';
+  }
+
+  renderTags2();
+
+  // ===================== TAB 3: Two Columns =====================
+  const selected3 = new Set();
+
+  function selectFromLeft(el, name) {
+    if (selected3.has(name)) return;
+    selected3.add(name);
+    el.classList.add('selected');
+    renderRightCol();
+    updateOutput3();
+  }
+
+  function removeFromRight(name) {
+    selected3.delete(name);
+    renderRightCol();
+    updateOutput3();
+  }
+
+  function renderRightCol() {
+    const right = document.getElementById('right-col');
+    right.innerHTML = '';
+    if (selected3.size === 0) {
+      right.innerHTML = '<span style="color:#475569; font-size:0.82rem; padding:8px; display:block;">Chưa chọn tài liệu nào</span>';
+      return;
+    }
+    selected3.forEach(name => {
+      const item = document.createElement('div');
+      item.className = 'doc-item';
+      item.innerHTML = `<span class="icon">${getIcon(name)}</span>${name}<span class="del" onclick="removeFromRight('${name.replace(/'/g,"\\'")}')">×</span>`;
+      right.appendChild(item);
+    });
+    // Sync left selection state
+    document.querySelectorAll('#left-col .doc-item').forEach(el => {
+      el.classList.toggle('selected', selected3.has(el.textContent.trim()));
+    });
+  }
+
+  function updateOutput3() {
+    document.getElementById('output-3').textContent = selected3.size ? `Đã chọn: ${[...selected3].join(', ')}` : '';
+  }
+
+  renderRightCol();
+
+  // ===================== TAB 4: Smart Checklist =====================
+  const checklistItems = [];
+
+  function addChecklistRow(docName = '') {
+    const id = Date.now() + Math.random();
+    checklistItems.push({ id, name: docName });
+    renderChecklist();
+  }
+
+  function removeChecklistRow(id) {
+    const idx = checklistItems.findIndex(i => i.id == id);
+    if (idx > -1) checklistItems.splice(idx, 1);
+    renderChecklist();
+    updateOutput4();
+  }
+
+  function updateChecklistItem(id, value) {
+    const item = checklistItems.find(i => i.id == id);
+    if (item) item.name = value;
+    updateOutput4();
+  }
+
+  function renderChecklist() {
+    const container = document.getElementById('checklist-container');
+    container.innerHTML = '';
+    checklistItems.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'checklist-row';
+      row.innerHTML = `
+        <span class="row-num">${idx + 1}</span>
+        <select style="flex:1;" onchange="handleSelectChange(this, ${item.id})">
+          <option value="">-- Chọn loại --</option>
+          ${docList.map(d => `<option value="${d}">${getIcon(d)} ${d}</option>`).join('')}
+          <option value="__custom__">+ Tùy chỉnh...</option>
+        </select>
+        <input type="text" placeholder="Tên tài liệu..." style="flex:2;" value="${item.name}" oninput="updateChecklistItem(${item.id}, this.value)">
+        <button onclick="removeChecklistRow(${item.id})" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:1.1rem; padding:4px;">×</button>
+      `;
+      container.appendChild(row);
+      if (item.name) {
+        const sel = row.querySelector('select');
+        const match = docList.includes(item.name);
+        if (match) {
+          sel.value = item.name;
+        } else {
+          sel.value = '__custom__';
+          row.querySelector('input').value = item.name;
+        }
+      }
+    });
+  }
+
+  function handleSelectChange(sel, id) {
+    if (sel.value === '__custom__') {
+      const input = sel.closest('.checklist-row').querySelector('input');
+      input.focus();
+      input.value = '';
+      updateChecklistItem(id, '');
+    } else {
+      updateChecklistItem(id, sel.value);
+    }
+  }
+
+  function updateOutput4() {
+    const names = checklistItems.filter(i => i.name.trim()).map(i => i.name);
+    document.getElementById('output-4').textContent = names.length ? `Đã chọn: ${names.join(', ')}` : '';
+  }
+
+  // Pre-add 3 rows
+  addChecklistRow('Proposal');
+  addChecklistRow('Project Plan');
+  addChecklistRow('');
+
+  renderCards1();
+
+  // ===================== Tab switching =====================
+  function switchTab(n) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', i + 1 === n);
+    });
+    document.querySelectorAll('.tab-panel').forEach((p, i) => {
+      p.classList.toggle('active', i + 1 === n);
+    });
+  }
+</script>
+
+</body>
+</html>
